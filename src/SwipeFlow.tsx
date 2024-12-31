@@ -6,7 +6,6 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  Image,
   GestureResponderEvent,
   PanResponderGestureState,
 } from 'react-native';
@@ -16,23 +15,28 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 const SWIPE_OUT_DURATION = 250;
 
-export interface CardData {
+interface CardData {
   name: string;
-  image: any; // Replace `any` with ImageSourcePropType if you're using TypeScript
+  image: any; 
 }
 
-export interface SwipeCardProps {
+interface SwipeCardProps {
   data: CardData[];
   onSwipeLeft: (item: CardData) => void;
   onSwipeRight: (item: CardData) => void;
   onSwipeTop: (item: CardData) => void;
+  renderCard: (item: CardData) => React.ReactNode;
+  renderEmptyCardView?: () => React.ReactNode; 
 }
 
-export const SwipeCard: React.FC<SwipeCardProps> = ({
+
+const SwipeCard: React.FC<SwipeCardProps> = ({
   data,
   onSwipeLeft,
   onSwipeRight,
   onSwipeTop,
+  renderCard,
+  renderEmptyCardView
 }) => {
   const [position] = useState(new Animated.ValueXY());
   const [index, setIndex] = useState(0);
@@ -125,42 +129,36 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
 
   const renderCards = () => {
     if (index >= data.length) {
-      return <Text>No more cards</Text>;
+      return renderEmptyCardView ? (
+        renderEmptyCardView()
+      ) : (
+        <View style={styles.emptyCardContainer}>
+          <Text>No more cards</Text>
+        </View>
+      );
     }
-
+  
     const currentCard = (
       <Animated.View
         key={index}
+      
         {...panResponder.panHandlers}
         style={[getCardStyle(), styles.card]}
       >
-        <Image
-          source={data[index].image}
-          style={{ height: 400, width: '90%', borderRadius: 20 }}
-          resizeMode="cover"
-        />
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>{data[index].name}</Text>
-        </View>
+        {renderCard(data[index])}
       </Animated.View>
     );
-
+  
     const upcomingCard =
       index + 1 < data.length ? (
         <View style={[styles.card, { top: 20 }]}>
-          <Image
-            source={data[index + 1].image}
-            style={{ height: 400, width: '90%', borderRadius: 20 }}
-          />
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{data[index + 1].name}</Text>
-          </View>
+          {renderCard(data[index + 1])}
         </View>
       ) : null;
-
+  
     return [upcomingCard, currentCard];
   };
-
+  
   return <View>{renderCards()}</View>;
 };
 
@@ -177,12 +175,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  nameContainer: {
-    position: 'absolute',
-    bottom: 40,
-    backgroundColor: 'rgba(136, 10, 10, 0.3)',
-    padding: 5,
-    borderRadius: 5,
+  emptyCardContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 50,
   },
 });
 
+export default SwipeCard;
