@@ -24,7 +24,7 @@ interface SwipeCardProps<T> {
   renderEmptyCardView?: () => React.ReactNode;
 }
 
-const SwipeCard = <T extends object>({
+export const SwipeCard = <T extends object>({
   data,
   onSwipeLeft,
   onSwipeRight,
@@ -174,5 +174,3 @@ const styles = StyleSheet.create({
     padding: 50,
   },
 });
-
-export default SwipeCard;
