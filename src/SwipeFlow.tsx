@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,34 +6,32 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  Image,
   GestureResponderEvent,
   PanResponderGestureState,
-} from 'react-native';
+} from "react-native";
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 const SWIPE_OUT_DURATION = 250;
 
-export interface CardData {
-  name: string;
-  image: any; // Replace `any` with ImageSourcePropType if you're using TypeScript
+interface SwipeCardProps<T> {
+  data: T[];
+  onSwipeLeft: (item: T) => void;
+  onSwipeRight: (item: T) => void;
+  onSwipeTop: (item: T) => void;
+  renderCard: (item: T) => React.ReactNode;
+  renderEmptyCardView?: () => React.ReactNode;
 }
 
-export interface SwipeCardProps {
-  data: CardData[];
-  onSwipeLeft: (item: CardData) => void;
-  onSwipeRight: (item: CardData) => void;
-  onSwipeTop: (item: CardData) => void;
-}
-
-export const SwipeCard: React.FC<SwipeCardProps> = ({
+const SwipeCard = <T extends object>({
   data,
   onSwipeLeft,
   onSwipeRight,
   onSwipeTop,
-}) => {
+  renderCard,
+  renderEmptyCardView,
+}: SwipeCardProps<T>) => {
   const [position] = useState(new Animated.ValueXY());
   const [index, setIndex] = useState(0);
   const nextCardIndex = useRef(1);
@@ -52,11 +50,11 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
         gesture: PanResponderGestureState
       ) => {
         if (gesture.dx > SWIPE_THRESHOLD) {
-          forceSwipe('right');
+          forceSwipe("right");
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          forceSwipe('left');
+          forceSwipe("left");
         } else if (gesture.dy < -SWIPE_THRESHOLD) {
-          forceSwipe('top');
+          forceSwipe("top");
         } else {
           resetPosition();
         }
@@ -64,18 +62,18 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
     })
   ).current;
 
-  const forceSwipe = (direction: 'right' | 'left' | 'top') => {
+  const forceSwipe = (direction: "right" | "left" | "top") => {
     let x = 0,
       y = 0;
 
     switch (direction) {
-      case 'right':
+      case "right":
         x = SCREEN_WIDTH;
         break;
-      case 'left':
+      case "left":
         x = -SCREEN_WIDTH;
         break;
-      case 'top':
+      case "top":
         y = -SCREEN_HEIGHT;
         break;
     }
@@ -87,16 +85,16 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
     }).start(() => onSwipeComplete(direction));
   };
 
-  const onSwipeComplete = (direction: 'right' | 'left' | 'top') => {
+  const onSwipeComplete = (direction: "right" | "left" | "top") => {
     const item = data[index];
     switch (direction) {
-      case 'right':
+      case "right":
         onSwipeRight(item);
         break;
-      case 'left':
+      case "left":
         onSwipeLeft(item);
         break;
-      case 'top':
+      case "top":
         onSwipeTop(item);
         break;
     }
@@ -114,7 +112,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
   const getCardStyle = () => {
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
-      outputRange: ['-120deg', '0deg', '120deg'],
+      outputRange: ["-120deg", "0deg", "120deg"],
     });
 
     return {
@@ -125,7 +123,13 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
 
   const renderCards = () => {
     if (index >= data.length) {
-      return <Text>No more cards</Text>;
+      return renderEmptyCardView ? (
+        renderEmptyCardView()
+      ) : (
+        <View style={styles.emptyCardContainer}>
+          <Text>No more cards</Text>
+        </View>
+      );
     }
 
     const currentCard = (
@@ -134,27 +138,14 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
         {...panResponder.panHandlers}
         style={[getCardStyle(), styles.card]}
       >
-        <Image
-          source={data[index].image}
-          style={{ height: 400, width: '90%', borderRadius: 20 }}
-          resizeMode="cover"
-        />
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>{data[index].name}</Text>
-        </View>
+        {renderCard(data[index])}
       </Animated.View>
     );
 
     const upcomingCard =
       index + 1 < data.length ? (
         <View style={[styles.card, { top: 20 }]}>
-          <Image
-            source={data[index + 1].image}
-            style={{ height: 400, width: '90%', borderRadius: 20 }}
-          />
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{data[index + 1].name}</Text>
-          </View>
+          {renderCard(data[index + 1])}
         </View>
       ) : null;
 
@@ -166,23 +157,22 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    position: 'absolute',
+    position: "absolute",
     width: SCREEN_WIDTH,
     padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   name: {
     fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
-  nameContainer: {
-    position: 'absolute',
-    bottom: 40,
-    backgroundColor: 'rgba(136, 10, 10, 0.3)',
-    padding: 5,
-    borderRadius: 5,
+  emptyCardContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 50,
   },
 });
 
+export default SwipeCard;

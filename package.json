@@ -1,6 +1,6 @@
 {
   "name": "react-native-swipeflow",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -19,6 +19,10 @@
     "@types/react-native": "^0.72.8",
     "typescript": "^5.7.2"
   },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/mohdjalalmk/SwipeFlow.git"
+},
   "files": [
     "dist"
   ]
