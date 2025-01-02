@@ -7,9 +7,17 @@
     "build": "tsc",
     "test": "echo \"No test specified\" && exit 0"
   },
-  "keywords": [],
+  "keywords": [
+    "React Native",
+    "Tinder Swipe",
+    "Swipe",
+    "Swipeable Cards",
+    "Touch Gestures",
+    "PanResponder",
+    "Card Carousel"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "peerDependencies": {
     "react": ">=18.0.0",
@@ -32,6 +40,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/mohdjalalmk/SwipeFlow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mohdjalalmk/SwipeFlow/issues"
   },
   "files": [
     "dist"
