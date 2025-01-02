@@ -134,9 +134,9 @@ export const SwipeCard = <T extends object>({
 
     const currentCard = (
       <Animated.View
-        key={index}
+        key={`card-${index}`}
         {...panResponder.panHandlers}
-        style={[getCardStyle(), styles.card]}
+        style={[getCardStyle(), styles.card, { zIndex: 2 }]}
       >
         {renderCard(data[index])}
       </Animated.View>
@@ -144,7 +144,8 @@ export const SwipeCard = <T extends object>({
 
     const upcomingCard =
       index + 1 < data.length ? (
-        <View style={[styles.card, { top: 20 }]}>
+        <View key={`card-${index+1}`}
+        style={[styles.card, { top: 20 ,zIndex: 1,}]}>
           {renderCard(data[index + 1])}
         </View>
       ) : null;

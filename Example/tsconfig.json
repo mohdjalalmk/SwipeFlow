@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "baseUrl": ["."],
+      "react-native-swipflow": ["../src/index"]
+    }
+  },
+  "references": [{ "path": "../tsconfig.json" }]
+}
