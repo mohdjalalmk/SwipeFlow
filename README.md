@@ -13,7 +13,7 @@ npm install react-native-swipeflow
 ```
 yarn add react-native-swipeflow
 ```
-![SwipeFlow Demo](https://raw.githubusercontent.com/mohdjalalmk/SwipeFlow/develop/gif/swipe.gif)
+![SwipeFlow Demo](https://raw.githubusercontent.com/mohdjalalmk/SwipeFlow/main/gif/swipe.gif) ![SwipeFlow Demo](https://raw.githubusercontent.com/mohdjalalmk/SwipeFlow/main/gif/example.gif)
 
 ## Usage
 
